@@ -108,7 +108,7 @@ def generate_map(api_key, center, zoom_level, map_type):
 
 def main():
     # Google 지도 API 키 입력
-    api_key = "AIzaSyCJjpyQ1_1dhC_IyXeS3Gg_BCckVmcuYx8"
+    api_key = env("GOOGLE_API_KEY")
 
     # 사용자로부터 장소, 반경, 데이터 입력 받기
     place = input("검색할 장소를 입력하세요: ")
