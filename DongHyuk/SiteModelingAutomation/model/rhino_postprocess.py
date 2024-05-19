@@ -1,5 +1,6 @@
-import rhinoscriptsyntax as rs
 import Rhino.Geometry as geo
+import rhinoscriptsyntax as rs
+
 
 def set_camera_view():
     view_name = "Perspective" 
@@ -26,8 +27,9 @@ def main():
     
     #Project vegetation onto contour mesh
     projected_vegetation_pts = rs.ProjectPointToMesh(vegetation_pts,contour_mesh,(0,0,1))
-    rs.CurrentLayer("Vegetation")
-    rs.AddPoints(projected_vegetation_pts)
+    if not projected_vegetation_pts:
+        rs.CurrentLayer("Vegetation")
+        rs.AddPoints(projected_vegetation_pts)
     rs.DeleteObjects(vegetation_pts)
     
     #Mesh to NURB

@@ -1,9 +1,10 @@
-from model.constants.options import *
-from zipfile import ZipFile
-from model.operator_ import Operator
-from os import path,mkdir,makedirs,remove
-from shutil import copy
 import subprocess
+from os import makedirs, mkdir, path, remove
+from shutil import copy
+from zipfile import ZipFile
+
+from model.constants.options import *
+from model.operator_ import Operator
 
 
 class SMA:

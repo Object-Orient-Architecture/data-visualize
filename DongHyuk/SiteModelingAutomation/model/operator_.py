@@ -1,11 +1,17 @@
-from os import path, makedirs, remove
+import json
+from os import makedirs, path, remove
 from shutil import rmtree
 from zipfile import ZipFile
+
 import geopandas as gpd
-import json
-
-
-from model.elements import Element, RoadElement, BuildingElement, VegetationElement, ContourElement, BorderElement
+from model.elements import (
+    BorderElement,
+    BuildingElement,
+    ContourElement,
+    Element,
+    RoadElement,
+    VegetationElement,
+)
 
 
 class Operator:
@@ -58,22 +64,22 @@ class Operator:
         throws Exception when index is not one of 'BUILDING', 'ROAD', 'VEGETATION', 'CONTOUR'
         """
         file_names = self.zip_file.namelist()  # namelist includes .shp, .shx and so on
- 
         shp_names = [
             name
             for name in file_names
             if self.__LAYER_INDEX[index] in name and name.endswith(".shp")
         ]  # Filter shp files which is of index
-
         dict_geoinfos = [
             gpd.read_file(
                 self.zip_dir + self.__TEMP_UNZIP_DIR + "\\" + shp_name,
                 encoding="euc-kr",
             ).to_dict(orient="records")
             for shp_name in shp_names
-        ][0]  # Convert shp Files into dict data list
+        ]  # Convert shp Files into dict data list
+        if not dict_geoinfos:
+            return
         # CAUTION : readed file contains the largest container<List> which only has one element so that removing that is needed
-
+        dict_geoinfos = dict_geoinfos[0]
         if index == "BUILDING":
             self.buildings = [
                 BuildingElement(info) for info in dict_geoinfos
@@ -135,7 +141,8 @@ class Operator:
             vegetation.build_to_rhino()
 
         # 3 - 3 - 4 | Bake Border
-        self.border.build_to_rhino()
+        if self.border:
+            self.border.build_to_rhino()
         
         # 3 - 3 - 5 | Bake Contours
         for contour in self.contours:
